@@ -1,4 +1,4 @@
 import requests
 
-res = requests.post('localhost:6000/generate')
+res = requests.post('http://localhost:6000/generate')
 print(res)
