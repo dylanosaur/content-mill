@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="static/index.css">
+
+        <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PY1R1WJVNG"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-PY1R1WJVNG');
+    </script>
+
+</head>
+<body>
+    <h1>Home Page</h1>
+    <form action="/generate" method="post">
+        <button type="submit">Generate Content</button>
+    </form>
+    <ul>
+        {% for page in pages %}
+        <li>
+            <a href="{{ url_for('page', page_id=page.id) }}" class="title">{{ page.title }}</a>
+            <span>Votes: {{ page.votes }}</span>
+            <span>{{ page.timestamp[:16] }}</span>
+            <form action="/vote/{{ page.id }}/upvote" method="post" style="display:inline;">
+                <button type="submit">Upvote</button>
+            </form>
+            <form action="/vote/{{ page.id }}/downvote" method="post" style="display:inline;">
+                <button type="submit">Downvote</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
