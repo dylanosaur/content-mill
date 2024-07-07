@@ -130,6 +130,8 @@ def page(page_id):
     if page_id == 0:
         page_id = 1
     page = conn.execute('SELECT * FROM pages WHERE id = ?', (page_id,)).fetchone()
+    if not page:
+        return redirect('/')
     conn.close()
 
     return render_template('page.html', page=page)

@@ -22,6 +22,7 @@
     <br/>
     <p>{{ page.content }}</p>
     <a href="/page/{{ page.id - 1}}">Previous</a>
+    <a href="/page/{{ page.id + 1}}">Next</a>
     <a href="{{ url_for('index') }}">Back to Home</a>
 </body>
 </html>
