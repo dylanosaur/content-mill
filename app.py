@@ -136,6 +136,30 @@ def page(page_id):
 
     return render_template('page.html', page=page)
 
+
+@app.route('/sitemap.xml', methods=['GET'])
+def sitemap():
+    conn = get_db_connection()
+    pages = conn.execute('SELECT id, timestamp FROM pages').fetchall()
+    conn.close()
+
+    sitemap_xml = '<?xml version="1.0" encoding="UTF-8"?>'
+    sitemap_xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+
+    # Static URLs
+    sitemap_xml += '<url><loc>https://www.ispillthetea.com/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>'
+
+    # Dynamic URLs
+    for page in pages:
+        url = url_for('page', page_id=page['id'], _external=True)
+        lastmod = page['timestamp']
+        sitemap_xml += f'<url><loc>{url}</loc><lastmod>{lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>'
+
+    sitemap_xml += '</urlset>'
+
+    return Response(sitemap_xml, mimetype='application/xml')
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
     # app.run()
