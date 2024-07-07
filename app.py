@@ -40,9 +40,8 @@ def vote(page_id, action):
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    keywords = ["pop culture", "trending", "latest news", "entertainment"]
-    title = "Random Pop Culture Article"
-    random_keyword = random.choice(keywords)
+
+    random_keyword = generate_subject()
     content = generate_content(random_keyword)
     generated_title = generate_title(content)
     generated_keywords = generate_keywords(content)
@@ -68,6 +67,19 @@ def get_latest_page():
     return page
 
 
+def generate_subject():
+    openai_client = OpenAI()
+
+    completion = openai_client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+            {"role": "system", "content": f"You are going to be used to generate subjects to create articles on a web blog. \
+                Give me a random subject or topic that is somewhat related to todays date"},
+            {"role": "user", "content": f"todays date: {datetime.now().isoformat()}. please respond with just the random subject"}
+        ]
+    )
+    return completion.choices[0].message.content
+
 def generate_content(keyword):
     openai_client = OpenAI()
 
@@ -79,7 +91,7 @@ def generate_content(keyword):
                 produce the output as if you were a latina suburbian housewife who loves her husband but also wants to bone the neighbor. You will\
                 also be given the previous content, and you should try to make it like a story where the articles plot develops and a story will \
                 be created as the content progresses. Just respond with the article content. Do not prefix the content with a title. I will generate \
-                that later."},
+                that later. Please respond in English."},
             {"role": "user", "content": f"previous_content: {get_latest_page()['content']}  ----------{keyword}"}
         ]
     )
@@ -92,7 +104,7 @@ def generate_title(content):
     model="gpt-3.5-turbo",
     messages=[
             {"role": "system", "content": f"Summarize the content into a good title. Respond with only the title. Do not prefix it with 'title' \
-             or append any extra characters. Absolutely no punctuation."},
+             or append any extra characters. Absolutely no punctuation.  Please respond in English."},
             {"role": "user", "content": content}
         ]
     )
@@ -106,7 +118,7 @@ def generate_keywords(content):
     messages=[
             {"role": "system", "content": f"Give a bunch of comma seperated keywords I can put in the document page keywords tag. \
              Respond with only the csv seperated keywords. Do not prefix it with 'keywords'. Include a random city in the US as well as one of the kewyords. \
-             Don't append any extra characters. Absolutely no punctuation."},
+             Don't append any extra characters. Absolutely no punctuation.  Please respond in English."},
             {"role": "user", "content": content}
         ]
     )
@@ -123,4 +135,5 @@ def page(page_id):
     return render_template('page.html', page=page)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=6000)
+    # app.run(debug=True, host='0.0.0.0', port=6000)
+    app.run()
