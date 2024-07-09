@@ -147,13 +147,13 @@ def sitemap():
     sitemap_xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
 
     # Static URLs
-    sitemap_xml += '<url><loc>https://www.ispillthetea.com/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>'
+    sitemap_xml += '<url><loc>https://www.ispillthetea.com/</loc></url>'
 
     # Dynamic URLs
     for page in pages:
         url = url_for('page', page_id=page['id'], _external=True)
-        lastmod = page['timestamp']
-        sitemap_xml += f'<url><loc>{url}</loc><lastmod>{lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>'
+        # lastmod = page['timestamp']
+        sitemap_xml += f'<url><loc>{url}</loc></url>'
 
     sitemap_xml += '</urlset>'
 
