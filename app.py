@@ -144,18 +144,21 @@ def sitemap():
     conn.close()
 
     sitemap_xml = '<?xml version="1.0" encoding="UTF-8"?>'
-    sitemap_xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    sitemap_xml += '<sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">'
+
+# <?xml version="1.0" encoding="UTF-8"?>
+# <sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">
 
     # Static URLs
-    sitemap_xml += '<url><loc>https://www.ispillthetea.com/</loc></url>'
+    sitemap_xml += '<sitemap><loc>https://www.ispillthetea.com/</loc></sitemap>'
 
     # Dynamic URLs
     for page in pages:
         url = url_for('page', page_id=page['id'], _external=True)
         # lastmod = page['timestamp']
-        sitemap_xml += f'<url><loc>{url}</loc></url>'
+        sitemap_xml += f'<sitemap><loc>{url}</loc></sitemap>'
 
-    sitemap_xml += '</urlset>'
+    sitemap_xml += '</sitemapindex>'
 
     return Response(sitemap_xml, mimetype='application/xml')
 
