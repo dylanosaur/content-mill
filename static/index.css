@@ -74,3 +74,16 @@ button {
 button:hover {
     background-color: #45a049;
 }
+
+/* Increase font size even more for screens smaller than 768px */
+@media (max-width: 1080px) {
+    li {
+        font-size: 1.8rem; /* Increase as needed */
+    }
+
+    li .title {
+        font-size: 1.8rem; /* Increase as needed */
+        overflow: auto;
+        text-wrap: wrap;
+    }
+}

@@ -4,12 +4,11 @@ from openai import OpenAI
 import random
 import os
 from datetime import datetime
+from info_pages import info_pages
 
 
 app = Flask(__name__)
-
-# Set up OpenAI API key
-# openai.api_key = os.getenv('OPENAI_API_KEY')
+app.register_blueprint(info_pages)
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -124,6 +123,23 @@ def generate_keywords(content):
     )
     return completion.choices[0].message.content  
 
+
+def add_line_breaks_to_content(content):
+    # Split the content at each period
+    content_lines = content.split('.')
+    
+    # Initialize a list to store the processed lines
+    processed_content = []
+    
+    # Iterate through the lines and add a line break after every fourth period
+    for i in range(len(content_lines)):
+        if i > 0 and i % 4 == 0:
+            processed_content.append('\n')
+        processed_content.append(content_lines[i] + '.' if i < len(content_lines) - 1 else content_lines[i])
+    
+    # Join the processed lines back into a single string
+    return ''.join(processed_content)
+
 @app.route('/page/<int:page_id>')
 def page(page_id):
     conn = get_db_connection()
@@ -134,7 +150,8 @@ def page(page_id):
         return redirect('/')
     conn.close()
 
-    return render_template('page.html', page=page)
+    return render_template('page.html', page=page, content=page['content'])
+
 
 
 @app.route('/sitemap.xml', methods=['GET'])
@@ -146,23 +163,30 @@ def sitemap():
     sitemap_xml = '<?xml version="1.0" encoding="UTF-8"?>'
     sitemap_xml += '<sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">'
 
-# <?xml version="1.0" encoding="UTF-8"?>
-# <sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">
-
     # Static URLs
     sitemap_xml += '<sitemap><loc>https://www.ispillthetea.com/</loc></sitemap>'
+
+    sitemap_xml += f'<sitemap><loc>{"https://ispillthetea.com/about"}</loc></sitemap>'
+    sitemap_xml += f'<sitemap><loc>{"https://ispillthetea.com/contact"}</loc></sitemap>'
+    sitemap_xml += f'<sitemap><loc>{"https://ispillthetea.com/privacy"}</loc></sitemap>'
+    sitemap_xml += f'<sitemap><loc>{"https://ispillthetea.com/terms"}</loc></sitemap>'
+    sitemap_xml += f'<sitemap><loc>{"https://ispillthetea.com/disclaimer"}</loc></sitemap>'
+
 
     # Dynamic URLs
     for page in pages:
         url = url_for('page', page_id=page['id'], _external=True)
-        # lastmod = page['timestamp']
         sitemap_xml += f'<sitemap><loc>{url}</loc></sitemap>'
+
+
 
     sitemap_xml += '</sitemapindex>'
 
     return Response(sitemap_xml, mimetype='application/xml')
 
 
+# content policy page
+# about us page
+# terms
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
-    # app.run()
