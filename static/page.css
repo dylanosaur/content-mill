@@ -89,9 +89,16 @@ button:hover {
     line-height: 1.6;
 }
 
-/* #content {
+#content {
     padding-left: 80px;
     padding-right: 80px;
     white-space: pre-wrap;
-    font-size: 3rem;
-} */
+    font-size: 18px;
+}
+
+/* Increase font size even more for screens smaller than 768px */
+@media (max-width: 1080px) {
+    #content {
+        font-size: 2.5rem; /* Increase as needed */
+    }
+}
